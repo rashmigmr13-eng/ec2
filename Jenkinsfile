@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'terraform', url: 'https://github.com/ManojKRISHNAPPA/microdegree-IT-batch-2025.git'
+                git branch: 'terraform', url: 'https://github.com/rashmigmr13-eng/ec2.git'
             }
         }
 
