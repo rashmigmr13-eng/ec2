@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'terraform', url: 'https://github.com/rashmigmr13-eng/ec2.git'
+                git branch: 'main', url: 'https://github.com/rashmigmr13-eng/ec2.git'
             }
         }
 
