@@ -19,13 +19,6 @@ pipeline {
             }
         }
 
-        stage('Show Workspace') {
-            steps {
-                echo "Files in workspace (for sanity check):"
-                sh 'ls -la'
-            }
-        }
-
         stage('Terraform Init') {
             steps {
                 echo "Initializing Terraform..."
