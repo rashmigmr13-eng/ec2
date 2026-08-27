@@ -2,7 +2,7 @@
 # PROVIDER — which cloud & region
 # -----------------------------
 provider "aws" {
-  region = "us-west-2"
+  region = "eu-west-2"
 }
 
 # -----------------------------
@@ -35,7 +35,7 @@ resource "aws_internet_gateway" "my_igw" {
 resource "aws_subnet" "my_subnet" {
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "us-west-2a"
+  availability_zone       = "eu-west-2a"
   map_public_ip_on_launch = true
 
   tags = {
