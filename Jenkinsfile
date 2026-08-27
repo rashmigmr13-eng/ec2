@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Terraform action')
+        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Terraform action to run')
     }
 
     environment {
@@ -11,32 +11,72 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
+                echo "Cloning repo..."
                 git branch: 'main', url: 'https://github.com/rashmigmr13-eng/ec2.git'
+            }
+        }
+
+        stage('Show Workspace') {
+            steps {
+                echo "Files in workspace (for sanity check):"
+                sh 'ls -la'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                dir('project-1') {
-                    sh 'terraform init'
-                }
+                echo "Initializing Terraform..."
+                sh 'terraform init'
             }
         }
 
-        stage('Terraform Action') {
+        stage('Terraform Validate') {
             steps {
-                dir('project-1') {
-                    sh """
-                        if [ "${params.ACTION}" = "apply" ]; then
-                            terraform apply -auto-approve
-                        else
-                            terraform destroy -auto-approve
-                        fi
-                    """
-                }
+                echo "Validating Terraform syntax..."
+                sh 'terraform validate'
             }
+        }
+
+        stage('Terraform Plan') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                echo "Planning changes..."
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                echo "Applying changes..."
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+
+        stage('Terraform Destroy') {
+            when {
+                expression { params.ACTION == 'destroy' }
+            }
+            steps {
+                echo "Destroying infrastructure..."
+                sh 'terraform destroy -auto-approve'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline finished successfully.'
+        }
+        failure {
+            echo '❌ Pipeline failed. Check the stage logs above.'
         }
     }
 }
